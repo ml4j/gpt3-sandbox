@@ -8,7 +8,7 @@ from api import demo_web_app
 question_prefix = 'What does the code below do? Write one comment for each of the following numbered statements:\n\n'
 question_suffix = "\n\n"
 answer_prefix = "Comments:\n\n"
-answer_suffix = "\n\n"
+answer_suffix = "\n"
 
 # Construct GPT object and show some examples
 gpt = GPT(engine="davinci",
@@ -18,8 +18,7 @@ gpt = GPT(engine="davinci",
           input_suffix = question_suffix,
           output_prefix = answer_prefix,
           output_suffix = answer_suffix,
-          append_input_suffix_and_output_prefix_to_query = True,
-          stop = "\n" + question_prefix)
+          append_output_prefix_to_query = True)
 
 gpt.add_example(Example('Statement 1) stream().map(Dimension::getName).collect(Collectors.toList()).toString();\n' +
 'Statement 2) stream().flatMap(c -> c.decompose().stream()).collect(Collectors.toList());\n' +
@@ -30,7 +29,7 @@ gpt.add_example(Example('Statement 1) stream().map(Dimension::getName).collect(C
 'Statement 2) // Call decompose recursively on each of the elements of the stream and collect the results into a list\n' +
 'Statement 3) // Collect the aliases from the stream returned by the decompose() method into a list, and add them to allDecomposedAliases\n' +
 'Statement 4) // Get the scaled corners of a bounding box using its width and height of the original image\n' +
-'Statement 5) // Obtain a list of the elements of subImages with indexes been channelRangeStart (inclusive) and channelRangeEnd (exclusive) and assign the list to a local variable called subImages',question_prefix, question_suffix, answer_prefix, answer_suffix))
+'Statement 5) // Obtain a list of the elements of subImages with indexes been channelRangeStart (inclusive) and channelRangeEnd (exclusive) and assign the list to a local variable called subImages'))
 
 
 # Define UI configuration
