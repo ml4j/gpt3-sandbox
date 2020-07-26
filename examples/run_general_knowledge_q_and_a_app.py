@@ -1,5 +1,6 @@
 """An example of changing the default "input:"/"output:" query structure \
-to a "Q:"/"A:" structure, and of appending the prompt query with "A: " """
+to a "Q:"/"A:" structure, of appending the prompt query with "A: ", \
+and of incuding a premise """
 
 import os
 import sys
@@ -25,6 +26,8 @@ gpt = GPT(engine="davinci",
           temperature=0.5,
           max_tokens=100,
           query_format=query_format)
+
+gpt.set_premise("The following is a general knowledge quiz:")
 
 gpt.add_example(Example('What is human life expectancy in the United States?', \
  'Human life expectancy in the United States is 78 years.'))

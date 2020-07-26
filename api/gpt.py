@@ -46,10 +46,12 @@ class QueryFormat():
 
     def __init__(self, input_format=TextFormat("input: ", "\n"),
                  output_format=TextFormat("output: ", "\n\n"),
-                 append_output_prefix_to_query=False):
+                 append_output_prefix_to_query=False,
+                 premise_format=TextFormat("", "\n\n")):
         self.input_format = input_format
         self.output_format = output_format
         self.append_output_prefix_to_query = append_output_prefix_to_query
+        self.premise_format = premise_format
 
         assert isinstance(input_format, TextFormat), \
         "Please create a TextFormat object."
@@ -78,10 +80,12 @@ class QueryFormat():
         return (self.output_format.get_suffix() \
         + self.input_format.get_prefix()).strip()
 
-
-    def format_query(self, prime_text, prompt):
+    def format_query(self, premise, prime_text, prompt):
         """Creates the query for the API request."""
-        query = prime_text + self.input_format.get_wrapped_text(prompt)
+        query = ""
+        if premise:
+            query = self.premise_format.get_wrapped_text(premise)
+        query = query + prime_text + self.input_format.get_wrapped_text(prompt)
         if self.append_output_prefix_to_query:
             query = query + self.output_format.get_prefix()
         return query
@@ -95,6 +99,7 @@ class GPT:
                  max_tokens=100,
                  query_format=QueryFormat()):
         self.examples = []
+        self.premise = ""
         self.engine = engine
         self.temperature = temperature
         self.max_tokens = max_tokens
@@ -102,6 +107,10 @@ class GPT:
 
         assert isinstance(query_format, QueryFormat), \
         "Please create a QueryFormat object."
+
+    def set_premise(self, premise):
+        """Sets a premise on the object """
+        self.premise = premise
 
     def add_example(self, ex):
         """Adds an example to the object. Example must be an instance
@@ -131,7 +140,8 @@ class GPT:
 
     def craft_query(self, prompt):
         """Creates the query for the API request."""
-        return self.query_format.format_query(self.get_prime_text(), prompt)
+        return self.query_format.format_query(self.premise, \
+        self.get_prime_text(), prompt)
 
     def submit_request(self, prompt):
         """Calls the OpenAI API with the specified parameters."""
